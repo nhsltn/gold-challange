@@ -1,0 +1,26 @@
+{
+  "name": "gold-challange",
+  "version": "1.0.0",
+  "description": "For Binar Academy Gold Challange",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nhsltn/gold-challange.git"
+  },
+  "keywords": [
+    "Binar"
+  ],
+  "author": "nhsltn",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nhsltn/gold-challange/issues"
+  },
+  "homepage": "https://github.com/nhsltn/gold-challange#readme",
+  "dependencies": {
+    "colors": "^1.4.0"
+  }
+}
