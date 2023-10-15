@@ -1,0 +1,20 @@
+[
+  {
+    "userId": 1,
+    "username": "nhsltn",
+    "password": "sembahsulton",
+    "email": "test@gmail.com",
+    "full_name": "Nurul Huda Sulton Aulia",
+    "address": "Tangerang",
+    "phone": "14045"
+  },
+  {
+    "userId": 2,
+    "username": "bukansulton",
+    "password": "sembahsulton",
+    "email": "test@gmail.com",
+    "full_name": "Siapa Ya",
+    "address": "London",
+    "phone": "14045"
+  }
+]
