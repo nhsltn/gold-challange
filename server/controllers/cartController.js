@@ -1,30 +1,19 @@
-const dbProducts = require("../db/products.json");
-const dbCart = require("../db/cart.json");
-const fs = require("fs");
+const db = require("../db/db");
 
 class Cartcontrollers {
-  // Fungsi untuk mem-generate user ID
-  static generateNewCartId(cart) {
-    if (cart.length === 0) {
-      return 1;
-    } else {
-      const maxCartId = Math.max(...cart.map((item) => item.cartId));
-      return maxCartId + 1;
-    }
-  }
-
-  static addToCart(req, res) {
+  static async addToCart(req, res) {
     try {
-      const productDb = [...dbProducts];
-      const cartDb = [...dbCart];
+      const currentDate = new Date();
+      const dbProducts = await db("product").select("*");
+
       // Mengambil ID Produk dan Quantity dari Body/Page
       const idProduct = parseInt(req.body.idProduct);
+      const idUser = parseInt(req.params.id);
       const quantityUser = parseInt(req.body.quantityUser);
-      // Generate ID Cart
-      let cartId = Cartcontrollers.generateNewCartId(cartDb);
 
       // mengambil data produk berdasarkan IDnya dari DB Produk untuk di sync di DB cart
-      const product = productDb.find((item) => item.id === idProduct);
+      const product = dbProducts.find((item) => item.product_id === idProduct);
+      console.log(product);
 
       // Conditional untuk memastikan bahwa produk tersebut ada
       if (!product) {
@@ -40,72 +29,48 @@ class Cartcontrollers {
 
       // menampung data cart untuk di push
       const cartItem = {
-        cartId,
-        idProduct,
-        quantityUser,
-        brand: product.brand,
-        name: product.name,
-        price: product.price,
-        description: product.description,
-        category_id: product.category_id,
+        quantity: quantityUser,
+        user_id: idUser,
+        product_id: idProduct,
+        created_at: currentDate,
+        updated_at: currentDate,
       };
 
-      // push ke DB
-      dbCart.push(cartItem);
-      let stringify = JSON.stringify(dbCart);
-      fs.writeFileSync("./db/cart.json", stringify);
+      await db("cart")
+        .insert(cartItem)
+        .then(function (result) {
+          res.json({ success: true, message: `cart added` });
+        });
     } catch (error) {
       console.error("Error menambahkan data ke dalam cart:", error);
       res.status(500).json({ error: "Failed to Add Cart" });
     }
   }
 
-  static getAllCartData(req, res) {
-    res.status(200).json(dbCart);
+  static async getAllCartData(req, res) {
+    console.log("Controller Connected");
+    const dataCart = await db("cart").select("*");
+    res.status(200).json(dataCart);
   }
 
-  static deleteAllData(req, res) {
+  static async deleteById(req, res) {
     try {
-      const cartDb = [...dbCart];
-      // Built in Function untuk menghapus semua item dalam Cart
-      cartDb.splice(0);
-      // Push Cart yang dihapus ke database
-      dbCart.push(cartDb);
-      let stringify = JSON.stringify(dbCart);
-      fs.writeFileSync("./db/cart.json", stringify);
+      const productId = req.body.productId;
+      const userId = req.params.id;
+
+      await db("cart")
+        .where({ product_id: productId, user_id: userId })
+        .del()
+        .then(() => {
+          res.status(200).json({ message: `Product telah dihapus dari Cart` });
+        });
     } catch (error) {
-      console.error("Error deleting data:", error);
-      res.status(500).json({ error: "Failed to delete data." });
-    }
-  }
-
-  static deleteById(req, res) {
-    try {
-      console.log("controller connected");
-      // mengambil ID Cart dari Params/URL
-      const idCart = parseInt(req.params.id);
-      console.log(idCart, "ambil cart ID dari Params");
-
-      // Mengambil Database Cart
-      const cartDb = [...dbCart];
-
-      // mencari index dari DB Cart bedasarkan ID
-      const index = cartDb.findIndex((item) => item.cartId === idCart);
-      console.log(index, "Check Index");
-      if (index === -1) {
-        return res
-          .status(404)
-          .json({ error: "Barang tidak ditemukan didalam Keranjang." });
-      }
-
-      // Hapus elemen dengan index yang sesuai menggunakan splice
-      cartDb.splice(index, 1);
-      dbCart.push(cartDb);
-      let stringify = JSON.stringify(dbCart);
-      fs.writeFileSync("./db/cart.json", stringify);
-    } catch (error) {
-      console.error("Error deleting data:", error);
-      res.status(500).json({ error: "Failed to delete data." });
+      res
+        .status(500)
+        .json({
+          message: "Gagal menghapus produk dari cart.",
+          error: error.message,
+        });
     }
   }
 }

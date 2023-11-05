@@ -1,9 +1,10 @@
-const dbProducts = require("../db/products.json");
+const db = require("../db/db");
 
 class Productcontrollers {
-  static getAllDataProduct(req, res) {
+  static async getAllDataProduct(req, res) {
     console.log("Controller Connected");
-    res.status(200).json(dbProducts);
+    const dataProducts = await db("product").select("*");
+    res.status(200).json(dataProducts);
   }
 }
 

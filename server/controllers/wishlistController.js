@@ -1,7 +1,3 @@
-const dbProducts = require("../db/products.json");
-const dbWl = require("../db/wishlist.json");
-const fs = require("fs");
-
 class Wishlistcontrollers {
   static generateNewWlId(wl) {
     if (wl.length === 0) {
