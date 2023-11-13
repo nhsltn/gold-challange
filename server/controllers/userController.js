@@ -21,7 +21,7 @@ class Usercontrollers {
 
       await db("user")
         .insert(userData)
-        .then(function (result) {
+        .then(function () {
           res.json({ success: true, message: `user registered` });
         });
     } catch (error) {
@@ -33,6 +33,7 @@ class Usercontrollers {
   static async userLogin(req, res) {
     try {
       // Ambil data dari DB
+
       const dataUser = await db("user").select("*");
 
       // mengambil data username & password dari postman/page
@@ -51,10 +52,48 @@ class Usercontrollers {
         return res.status(401).json({ message: "Wrong Password" });
       }
 
-      res.json({ message: "Login Success" });
+      res.redirect("/");
     } catch (error) {
       console.error("Error dalam proses login", error);
       res.status(500).json({ error: "Failed to login" });
+    }
+  }
+
+  static async renderLoginPage(req, res) {
+    res.render("login");
+  }
+
+  static async updateUserProfile(req, res) {
+    try {
+      const idUser = parseInt(req.params.id);
+      const { nama, email, address, phone_number } = req.body;
+
+      const updatedUserData = {
+        nama,
+        email,
+        address,
+        phone_number,
+        updated_at: new Date(),
+      };
+
+      const result = await db("user")
+        .where("user_id", idUser)
+        .update(updatedUserData)
+        .then(function () {
+          res.json({ success: true, message: `update profile berhasil` });
+        });
+
+      if (result === 0) {
+        // Jika tidak ada pengguna dengan user_id tersebut
+        return res
+          .status(404)
+          .json({ success: false, error: "User not found" });
+      }
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+      res
+        .status(500)
+        .json({ success: false, error: "Failed to update user profile" });
     }
   }
 }

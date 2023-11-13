@@ -3,6 +3,10 @@ const Usercontrollers = require("../controllers/userController");
 
 routes.post("/register", Usercontrollers.userRegister);
 
-routes.get("/login", Usercontrollers.userLogin);
+routes.get("/login", Usercontrollers.renderLoginPage);
+
+routes.post("/login", Usercontrollers.userLogin);
+
+routes.put("/:id/", Usercontrollers.updateUserProfile);
 
 module.exports = routes;

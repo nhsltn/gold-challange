@@ -6,7 +6,9 @@ const wishlistRoutes = require("./wishlistRoutes");
 const checkoutRoutes = require("./checkoutRoutes");
 const paymentRoutes = require("./paymentRoutes");
 
-routes.get("/", (req, res) => res.render("helloWorld"));
+routes.get("/", (req, res) => res.render("home"));
+
+routes.get("/about-us", (req, res) => res.render("aboutus"));
 
 routes.use("/api/user", userRoutes);
 
