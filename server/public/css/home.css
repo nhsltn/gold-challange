@@ -1,0 +1,13 @@
+body {
+  font-family: "Poppins", sans-serif !important;
+}
+
+.left-content {
+  padding: 0 100px;
+}
+
+.banner {
+  max-width: 800px;
+  height: auto;
+  display: block;
+}
